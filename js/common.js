@@ -8,15 +8,6 @@ function getParameterByName(name) {
     return results == null ? "" : decodeURIComponent(results[1].replace(/\+/g, " "));
 }
 
-
-
-
-
-
-
-
-
-
 function message_got (event) {
 	console.log(event);	
 	var message = JSON.parse(event.data);

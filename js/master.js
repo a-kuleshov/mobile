@@ -9,7 +9,6 @@ function wait_connect (event) {
 
 function prepare_socket(e) {
 	token = getParameterByName('t');
-	alert(token);
 	socket.onerror = function(error) {
 		document.getElementById("label").innerHTML = "Возникли какие-то трудности";
 	};

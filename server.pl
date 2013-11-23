@@ -23,7 +23,7 @@ $server->start;
 
 sub got_message {
     my ($conn, $msg) = @_;
-    warn Dumper $msg;
+    warn $msg;
     my $m = from_json( $msg );
     if ($m->{action} eq 'give_me_token') {
         give_token($conn, $m->{ip});
@@ -92,7 +92,7 @@ sub just_send_message {
 
 sub close_connection {
     my ($conn) = @_;
-    print Dumper $conn;
+#    print Dumper $conn;
     $conn->disconnect(1000, 777);
     $conn->{partner}->disconnect(1000, 777);
 }
