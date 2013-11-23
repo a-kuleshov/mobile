@@ -1,0 +1,32 @@
+<!DOCTYPE html>
+<html lang="ru">
+	<head>
+    	<meta http-equiv="content-type" content="text/html; charset=utf-8" />
+	    <title>Начальник
+	    </title>
+	    <script src='js/master.js'></script>
+	    <script src='js/common.js'></script>
+    </head>
+	<body>
+		<script type="text/javascript">
+			var socket = new WebSocket(host);
+			socket.onopen = prepare_socket;
+		</script>
+		<div id="label"></div>
+		<div id="main">
+			<form onsubmit="try_to_connect(this); return false;">
+				<input name="text" type="text" id="text"></input>
+				<input type="submit" value="Connect!" />
+			</form>
+		</div>
+	</body>
+</html>
+
+<div id="template" hidden>
+	<div id="window_for_messages"></div>
+	<form id="form_for_chat">
+		<input name="text" type="text" id="text"></input>
+		<input id="send_button" value="Отправить" type="button">
+		<input id="close_connection" value="Прервать" type="button">
+	</form>
+</div>
