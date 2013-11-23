@@ -1,4 +1,5 @@
-var ip = "192.168.1.108";
+var ip = "192.168.1.108"; 
+var ip = "192.168.1.40"; 
 var host = "ws://" + ip + ":8080";
 
 function getParameterByName(name) {
