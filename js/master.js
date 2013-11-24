@@ -28,8 +28,9 @@ function prepare_socket(e) {
 
 function devOrientHandler (e) {
 	data = JSON.stringify({
-		action : "message",
+		action : "command",
 		data : {
+			command : 'update_angles',
 			alpha : event.alpha,
 			beta : event.beta,
 			gamma : event.gamma,

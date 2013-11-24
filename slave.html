@@ -7,12 +7,6 @@
 	    <script src='js/common.js'></script>
     </head>
 	<body>
-		<script type="text/javascript">
-			var socket = new WebSocket(host);
-			socket.onopen = prepare_socket;
-
-
-		</script>
 		<div id="label"></div>
 		<div id="main">
 			<form>
@@ -20,6 +14,9 @@
 			</form>
 			<div id="place_for_token" ></div>
 		</div>
-
+		<script type="text/javascript">
+			var socket = new WebSocket(host);
+			socket.onopen = prepare_socket;
+		</script>
 	</body>
 </html>

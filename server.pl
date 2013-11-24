@@ -37,6 +37,9 @@ sub got_message {
     if ($m->{action} eq 'close') {
         close_connection($conn);
     }
+    if ($m->{action} eq 'command') {
+        command($conn, $msg);
+    }
 }
 
 sub give_token {
@@ -70,13 +73,7 @@ sub try_to_connect {
         $conn->{partner} = $conn->{server}->{connections}->{$token}->{slave};
         $conn->{server}->{connections}->{$token}->{slave}->{partner} = $conn;
         $conn->{server}->{connections}->{$token}->{slave}->send_utf8('Partner_connected');
-        print "connected1\n 
-        : $conn->{server}->{connections}->{$token}->{slave} \n :
-          $conn->{server}->{connections}->{$token}->{master} \n
-          : $conn->{partner}\n";
-
     } else {
-        print "not connected\n";
         $conn->send_utf8('Такого токена не существует');
     }
 }
@@ -95,4 +92,9 @@ sub close_connection {
 #    print Dumper $conn;
     $conn->disconnect(1000, 777);
     $conn->{partner}->disconnect(1000, 777);
+}
+
+sub command {
+    my ($conn, $msg) = @_;
+    $conn->{partner}->send_utf8($msg);
 }
