@@ -1,6 +1,8 @@
 var ip = "192.168.1.108"; 
-var ip = "192.168.1.40"; 
+//var ip = "192.168.1.40"; 
 var host = "ws://" + ip + ":8080";
+var canvas_width = 800;
+var canvas_height = 400;
 
 function getParameterByName(name) {
     name = name.replace(/[\[]/, "\\\[").replace(/[\]]/, "\\\]");
@@ -12,7 +14,7 @@ function getParameterByName(name) {
 function message_got (event) {
 	console.log(event);	
 	var message = JSON.parse(event.data);
-	if( message.action = 'message') {message
+	if( message.action = 'message') {
 		console.log(message);
 		document.getElementById("window_for_messages").innerHTML += '<b>Он:</b>' + message.data + '<br>';
 	}

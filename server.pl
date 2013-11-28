@@ -6,6 +6,7 @@ use strict;
 use utf8;
 use JSON qw ( from_json to_json);
 use Imager::QRCode;
+use v5.10;
 
 my $server = Net::WebSocket::Server->new(
     listen => 8080,
@@ -60,7 +61,7 @@ sub give_token {
     );
     my $img = $qrcode->plot("http://$ip/master.html?t=$token");
     $img->write(file => "images/$token.bmp");
-    $conn->send_utf8("<img src='http://$ip/images/$token.bmp'></img>$token");
+    $conn->send_utf8("<img src='http://$ip/images/$token.bmp'></img><a href='http://$ip/master.html?t=$token'>$token</a>");
 }
 
 sub try_to_connect {
@@ -96,5 +97,12 @@ sub close_connection {
 
 sub command {
     my ($conn, $msg) = @_;
-    $conn->{partner}->send_utf8($msg);
+    say $conn->{partner}; 
+    eval {
+        $conn->{partner}->send_utf8($msg);
+    };
+    if ($@) {
+        close_connection($conn);
+        say "Deal is shit: $@";
+    }
 }

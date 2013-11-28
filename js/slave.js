@@ -1,8 +1,14 @@
 function Ball() {
 	var m = {
+		pref : {
+			controling : getParameterByName('c'),
+		},
+		geometry : {
+			radius : 10,
+		},
 		pos : {
-			x : 0,
-			y : 0,
+			x : 400,
+			y : 400,
 		},
 		V : {
 			x : 0,
@@ -18,22 +24,37 @@ function Ball() {
 			beta : 0,
 		},
 
-		angle2a : 1,
-		a2V : 1,
-		V2pos : 1,
+		convert : {
+			angle2a : 0.001,
+			a2V : 1,
+			V2pos : 1,
+			angle2V : 0.05,
+		}
 	};
 
 	updateMechanics = function() {
-		this.a.x = this.angle.alpha * this.angle2a;
-		this.a.y = this.angle.beta * this.angle2a;
+		if (this.pref.controling == 'velocity') {
+			this.V.x = this.angle.alpha * this.convert.angle2V;
+			this.V.y = this.angle.beta * this.convert.angle2V;
+		} else {
+			this.a.x = this.angle.alpha * this.convert.angle2a;
+			this.a.y = this.angle.beta * this.convert.angle2a;
+			this.V.x += this.a.x * this.convert.a2V;
+			this.V.y += this.a.y * this.convert.a2V;
+		}
 
-		this.V.x += this.a.x * this.a2V;
-		this.V.y += this.a.y * this.a2V;
+		this.pos.x += this.V.x * this.convert.V2pos;
+		this.pos.y += this.V.y * this.convert.V2pos;
+		if ( this.pos.x > canvas_width - this.geometry.radius )
+			this.pos.x=canvas_width - this.geometry.radius;
+		if ( this.pos.y > canvas_height - this.geometry.radius )
+			this.pos.y=canvas_height - this.geometry.radius;
+		if ( this.pos.y <  this.geometry.radius )
+			this.pos.y=this.geometry.radius;
+		if ( this.pos.x < this.geometry.radius )
+			this.pos.x=this.geometry.radius;		
 
-		this.pos.x += this.V.x * this.V2pos;
-		this.pos.y += this.V.y * this.V2pos;
-
-		console.log('x: ' + this.pos.x + ' y: ' + this.pos.y + 'Vx: ' + this.V.x + ' Vy: ' + this.V.y + 'ax: ' + this.a.x + ' ay: ' + this.a.y); 
+//		console.log('x: ' + this.pos.x + ' y: ' + this.pos.y + 'Vx: ' + this.V.x + ' Vy: ' + this.V.y + 'ax: ' + this.a.x + ' ay: ' + this.a.y); 
 	};
 
 	m.runTimer = function (ms) {
@@ -42,8 +63,14 @@ function Ball() {
 		};
 		item = this;
 		setInterval(function () {
+			var canvas = document.getElementById("canvas");
+			var ctx = canvas.getContext('2d');
 			item.updateMechanics();
+			drawcircle(ctx, item.pos.x, item.pos.y, {
+				radius : item.geometry.radius,
+			});
 		}, ms);
+
 	};
 
 	m.updateAngles = updateAngles;
@@ -52,8 +79,8 @@ function Ball() {
 	return m;
 };
 
-updateAngles = function(alpha, beta) {
-	this.angle.alpha = alpha;
+updateAngles = function(beta, gamma) {
+	this.angle.alpha = gamma;
 	this.angle.beta = beta;
 };
 
@@ -86,15 +113,9 @@ function wait_token (event) {
 function wait_of_master (event) {
 	var msg = event.data;
 	if (msg == 'Partner_connected') {
-		console.log(msg);
+		document.getElementById("main").innerHTML = "<canvas height='" + canvas_height +"' width='" + canvas_width + "' id='canvas'>Обновите браузер</canvas>";
 		Mechanics = new Ball();
-		Mechanics.runTimer(2000);
-		var node = document.getElementById("main").innerHTML = "<canvas height='320' width='480' id='canvas'>Обновите браузер</canvas>";
-		var canvas = document.getElementById("canvas");
-		var ctx = canvas.getContext('2d');
-		ctx.beginPath();
-		ctx.arc(80, 100, 56, 0, 2*Math.PI, true);
-		ctx.stroke();
+		Mechanics.runTimer(10);
 		this.onmessage = wait_command;
 	}
 }
@@ -102,6 +123,22 @@ function wait_of_master (event) {
 function wait_command (event) {
 	data = JSON.parse(event.data);
 	if (data.action == 'command') {
-		Mechanics.updateAngles(data.data.alpha, data.data.beta);
+		if (data.data.command == 'update_angles') {
+			Mechanics.updateAngles(data.data.beta, data.data.gamma);
+		}
+		if (data.data.command == 'update_radius') {
+			console.log(data.data.dX);
+			Mechanics.geometry.radius += data.data.dX;
+			if (Mechanics.geometry.radius < 0)
+				Mechanics.geometry.radius = 0;
+		}
 	}
+}
+
+function drawcircle (ctx, x, y, p) {
+    ctx.fillStyle = "#FFFFFF";
+    ctx.fillRect(0, 0, ctx.canvas.width, ctx.canvas.height);	
+	ctx.beginPath();
+	ctx.arc(x, y, p.radius, 0, 2*Math.PI, true);
+	ctx.stroke(); 
 }
