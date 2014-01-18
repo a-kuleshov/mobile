@@ -1,5 +1,4 @@
-var ip = "192.168.1.108"; 
-//var ip = "192.168.1.40"; 
+var ip = "a-kuleshov.ru"; 
 var host = "ws://" + ip + ":8080";
 var canvas_width = 800;
 var canvas_height = 400;
